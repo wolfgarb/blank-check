@@ -28,17 +28,17 @@ request.onerror = function (event) {
   console.log(event.target.errorCode);
 };
 
-// function to submit with no connection
-function saveRecord(record) {
-  // open new transaction with DB with read/write permissions
-  const transaction = db.transaction(['new_trans'], 'readwrite');
+// // function to submit with no connection
+// function saveRecord(record) {
+//   // open new transaction with DB with read/write permissions
+//   const transaction = db.transaction(['new_trans'], 'readwrite');
 
-  // access the object store for 'new_trans'
-  const transObjectStore = transaction.objectStore('new_trans');
+//   // access the object store for 'new_trans'
+//   const transObjectStore = transaction.objectStore('new_trans');
 
-  // add record with the 'add' method
-  transObjectStore.add(record);
-}
+//   // add record with the 'add' method
+//   transObjectStore.add(record);
+// }
 
 function uploadTrans() {
   // open transaction on db
@@ -46,16 +46,16 @@ function uploadTrans() {
   // access store
   const transObjectStore = transaction.objectStore('new_trans');
   // get all records from store and set to variable
-  const getAll = transObjectStore.getAll();
+  const getTrans = transObjectStore.getAll();
 
   // on success...
-  getAll.onsuccess = function () {
+  getTrans.onsuccess = function () {
     // if data exists, send to api server
-    if (getAll.result.length > 0) {
+    if (getTrans.result.length > 0) {
       // POST /api/transactions endpoint
       fetch('/api/transaction/bulk', {
         method: 'POST',
-        body: JSON.stringify(getAll.result),
+        body: JSON.stringify(getTrans.result),
         headers: {
           Accept: 'application/json, text/plain, */*',
           'Content-Type': 'application/json'
@@ -84,5 +84,3 @@ function uploadTrans() {
 
 // listener for app coming back online
 window.addEventListener('online', uploadTrans);
-
-export { saveRecord };
