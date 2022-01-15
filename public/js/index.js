@@ -1,3 +1,6 @@
+let transactions = [];
+let myChart;
+
 // function to submit with no connection
 function saveRecord(record) {
   // open new transaction with DB with read/write permissions
@@ -9,9 +12,6 @@ function saveRecord(record) {
   // add record with the 'add' method
   transObjectStore.add(record);
 }
-
-let transactions = [];
-let myChart;
 
 fetch('/api/transaction')
   .then((response) => {
