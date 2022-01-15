@@ -28,25 +28,25 @@ request.onerror = function (event) {
   console.log(event.target.errorCode);
 };
 
-// // function to submit with no connection
-// function saveRecord(record) {
-//   // open new transaction with DB with read/write permissions
-//   const transaction = db.transaction(['new_trans'], 'readwrite');
+// function to submit with no connection
+function saveRecord(record) {
+  // open new transaction with DB with read/write permissions
+  const transaction = db.transaction(['new_trans'], 'readwrite');
 
-//   // access the object store for 'new_trans'
-//   const transObjectStore = transaction.objectStore('new_trans');
+  // access the object store for 'new_trans'
+  const transObjectStore = transaction.objectStore('new_trans');
 
-//   // add record with the 'add' method
-//   transObjectStore.add(record);
-// }
+  // add record with the 'add' method
+  transObjectStore.add(record);
+}
 
 function uploadTrans() {
   // open transaction on db
   const transaction = db.transaction(['new_trans'], 'readwrite');
   // access store
-  const transObjectStore = transaction.objectStore('new_trans');
+  const store = transaction.objectStore('new_trans');
   // get all records from store and set to variable
-  const getTrans = transObjectStore.getAll();
+  const getTrans = store.getAll();
 
   // on success...
   getTrans.onsuccess = function () {
@@ -69,11 +69,11 @@ function uploadTrans() {
           // open another transaction for pending
           const transaction = db.transaction(['new_trans'], 'readwrite');
           // access new_trans obj store
-          const transObjectStore = transaction.transObjectStore('new_trans');
+          const store = transaction.transObjectStore('new_trans');
           // CLEAR from store, bc it has been successfully moved to the db
-          transObjectStore.clear();
+          store.clear();
 
-          console.log('All pending transactions have been submitted');
+          window.alert('Transaction(s) have been saved and submitted');
         })
         .catch((err) => {
           console.log(err);
