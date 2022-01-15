@@ -1,7 +1,9 @@
+// variable to hold connection
 let db;
-
+// establish a connection to IDB called 'budget tracker', V 1.0
 const request = indexedDB.open('budget_tracker', 1);
 
+// this event occurs if the DB version changes
 request.onupgradeneeded = function (event) {
   // save reference to db
   const db = event.target.result;
@@ -9,13 +11,15 @@ request.onupgradeneeded = function (event) {
   db.createObjectStore('new_trans', { autoIncrement: true });
 };
 
+// success
 request.onsuccess = function (event) {
+  // on success, save reference to global variable 'db'
   db = event.target.result;
 
+  // conditional to check if online.
   if (navigator.onLine) {
-    // functions to write...
-    // uploadDeposit
-    // uploadWithdrawal
+    // if online, carry out uploadTrans()
+    uploadTrans();
     console.log('nav online');
   }
 };
@@ -35,3 +39,50 @@ function saveRecord(record) {
   // add record with the 'add' method
   transObjectStore.add(record);
 }
+
+function uploadTrans() {
+  // open transaction on db
+  const transaction = db.transaction(['new_trans'], 'readwrite');
+  // access store
+  const transObjectStore = transaction.objectStore('new_trans');
+  // get all records from store and set to variable
+  const getAll = transObjectStore.getAll();
+
+  // on success...
+  getAll.onsuccess = function () {
+    // if data exists, send to api server
+    if (getAll.result.length > 0) {
+      // POST /api/transactions endpoint
+      fetch('/api/transaction/bulk', {
+        method: 'POST',
+        body: JSON.stringify(getAll.result),
+        headers: {
+          Accept: 'application/json, text/plain, */*',
+          'Content-Type': 'application/json'
+        }
+      })
+        .then((response) => response.json())
+        .then((serverResponse) => {
+          if (serverResponse.message) {
+            throw new Error(serverResponse);
+          }
+          // open another transaction for pending
+          const transaction = db.transaction(['new_trans'], 'readwrite');
+          // access new_trans obj store
+          const transObjectStore = transaction.transObjectStore('new_trans');
+          // CLEAR from store, bc it has been successfully moved to the db
+          transObjectStore.clear();
+
+          console.log('All pending transactions have been submitted');
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  };
+}
+
+// listener for app coming back online
+window.addEventListener('online', uploadTrans);
+
+export { saveRecord };
