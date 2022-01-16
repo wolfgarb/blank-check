@@ -78,7 +78,7 @@ To download via Google Chrome, find the download icon located to the right side 
 
 ### Safari
 
-_iOS 15.1_
+_iOS V 15.1_
 
 If you have the most recent version of Safari, the address bar is now located at the bottom of the screen. First, hit the 'share' icon:
 
