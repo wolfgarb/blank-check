@@ -39,7 +39,7 @@ _This project requires Node.js and other dependencies_
 Navigate to the directory you would like to use using the CLI and then clone this repository:
 
 ```bash
-git clone git@github.com:wolfgarb/blank-check.git
+git clone git@github.com:wolfskillobyte/blank-check.git
 ```
 
 Find the `package.json` file and make sure you have installed the necessary packages.
